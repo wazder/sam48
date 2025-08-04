@@ -62,7 +62,7 @@ def main():
             logger.error(f"Failed to update config: {e}")
     
     # Frame limit (set your desired number here)
-    MAX_FRAMES = 1000  # Process only first 1000 frames
+    MAX_FRAMES = 100  # Process only first 100 frames
     
     # Initialize and run pipeline
     pipeline = Sam48Pipeline(config_path)
