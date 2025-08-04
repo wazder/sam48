@@ -143,9 +143,10 @@ class Sam48Pipeline:
                 self.total_frames = self.video_handler.total_frames
                 
                 # Apply frame limit if specified
+                original_frames = self.total_frames
                 if max_frames is not None and max_frames < self.total_frames:
                     self.total_frames = max_frames
-                    logger.info(f"Processing first {self.total_frames} frames from {video_path} (limited from {self.video_handler.total_frames})")
+                    logger.info(f"Processing first {self.total_frames} frames from {video_path} (limited from {original_frames})")
                 else:
                     logger.info(f"Processing {self.total_frames} frames from {video_path}")
                 
@@ -167,10 +168,9 @@ class Sam48Pipeline:
                 classification_results = {}  # track_id -> classification_result
                 
                 # Process frames  
-                frames_to_process = self.total_frames if max_frames is None else min(max_frames, self.total_frames)
                 progress_bar = tqdm(
                     self.video_handler.frames(), 
-                    total=frames_to_process,
+                    total=self.total_frames,
                     desc="Processing frames"
                 )
                 
