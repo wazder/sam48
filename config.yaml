@@ -4,10 +4,10 @@ video:
   output_dir: "output"
 
 detection:
-  model: "yolov8n.pt"
+  model: "yolov8x.pt"  # Daha büyük model kullan
   classes: ["person", "handbag", "backpack", "suitcase"]
-  confidence_threshold: 0.5
-  iou_threshold: 0.5
+  confidence_threshold: 0.3  # Daha düşük threshold
+  iou_threshold: 0.4
 
 tracking:
   tracker: "bytetrack"
@@ -24,7 +24,7 @@ roi:
 sam:
   model_type: "vit_h"
   checkpoint_path: "sam_vit_h_4b8939.pth"
-  threshold: 10  # Single threshold: frames to stay in ROI before SAM analysis
+  threshold: 5  # Daha sık SAM analizi
 
 features:
   color_bins: 32
