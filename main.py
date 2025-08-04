@@ -61,12 +61,15 @@ def main():
         except Exception as e:
             logger.error(f"Failed to update config: {e}")
     
+    # Frame limit (set your desired number here)
+    MAX_FRAMES = 1000  # Process only first 1000 frames
+    
     # Initialize and run pipeline
     pipeline = Sam48Pipeline(config_path)
     
     try:
         logger.info("Starting video processing...")
-        success = pipeline.process_video(video_path)
+        success = pipeline.process_video(video_path, max_frames=MAX_FRAMES)
         
         if success:
             logger.success("✅ Pipeline completed successfully!")

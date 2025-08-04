@@ -116,12 +116,13 @@ class Sam48Pipeline:
             logger.error(f"Failed to initialize components: {e}")
             return False
             
-    def process_video(self, video_path: str) -> bool:
+    def process_video(self, video_path: str, max_frames: int = None) -> bool:
         """
         Process entire video through the pipeline.
         
         Args:
             video_path: Path to input video file
+            max_frames: Maximum number of frames to process (None for all frames)
             
         Returns:
             True if processing successful
@@ -140,7 +141,13 @@ class Sam48Pipeline:
                     return False
                     
                 self.total_frames = self.video_handler.total_frames
-                logger.info(f"Processing {self.total_frames} frames from {video_path}")
+                
+                # Apply frame limit if specified
+                if max_frames is not None and max_frames < self.total_frames:
+                    self.total_frames = max_frames
+                    logger.info(f"Processing first {self.total_frames} frames from {video_path} (limited from {self.video_handler.total_frames})")
+                else:
+                    logger.info(f"Processing {self.total_frames} frames from {video_path}")
                 
                 # Initialize debug video writer if enabled
                 if self.debug_visualizer:
@@ -167,6 +174,11 @@ class Sam48Pipeline:
                 )
                 
                 for frame_id, frame in progress_bar:
+                    # Stop if we've reached the frame limit
+                    if max_frames is not None and frame_id >= max_frames:
+                        logger.info(f"Reached frame limit: {max_frames}")
+                        break
+                        
                     self.current_frame_id = frame_id
                     
                     # Process single frame
