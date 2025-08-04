@@ -181,16 +181,23 @@ class DebugVisualizer:
             if result.get('success') and 'mask' in result:
                 mask = result['mask']
                 
+                # Ensure mask dimensions match frame dimensions
+                frame_h, frame_w = frame.shape[:2]
+                mask_h, mask_w = mask.shape
+                
+                # Resize mask if dimensions don't match
+                if mask_h != frame_h or mask_w != frame_w:
+                    mask = cv2.resize(mask.astype(np.uint8), (frame_w, frame_h), interpolation=cv2.INTER_NEAREST).astype(bool)
+                
                 # Create colored overlay for mask
                 overlay = np.zeros_like(frame)
                 overlay[mask] = self.colors['sam_mask']
                 
                 # Blend with original frame
                 alpha = 0.3
-                mask_area = frame[:self.frame_size[1], :self.frame_size[0]]
-                mask_area[mask] = cv2.addWeighted(
-                    mask_area[mask], 1 - alpha, 
-                    overlay[:self.frame_size[1], :self.frame_size[0]][mask], alpha, 0
+                frame[mask] = cv2.addWeighted(
+                    frame[mask], 1 - alpha, 
+                    overlay[mask], alpha, 0
                 )
                 
                 # Add SAM label
