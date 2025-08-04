@@ -1,0 +1,44 @@
+video:
+  input_resolution: [1024, 1024]
+  fps: 30
+  output_dir: "output"
+
+detection:
+  model: "yolov8n.pt"
+  classes: ["person", "handbag", "backpack", "suitcase"]
+  confidence_threshold: 0.5
+  iou_threshold: 0.5
+
+tracking:
+  tracker: "bytetrack"
+  track_thresh: 0.6
+  track_buffer: 30
+  match_thresh: 0.8
+  frame_rate: 30
+
+roi:
+  # Quadrilateral defined by 4 corner points [x, y]
+  # Points should be in clockwise order
+  polygon_points: [[300, 300], [700, 300], [700, 700], [300, 700]]
+  
+sam:
+  model_type: "vit_h"
+  checkpoint_path: "sam_vit_h_4b8939.pth"
+  threshold: 10  # Single threshold: frames to stay in ROI before SAM analysis
+
+features:
+  color_bins: 32
+  shape_descriptors: ["area", "perimeter", "solidity", "extent"]
+
+logging:
+  format: "json"  # json or csv
+  debug_video: true
+  save_masks: true
+
+debug:
+  debug_video: true
+  show_bboxes: true
+  show_track_ids: true
+  show_roi: true
+  show_sam_masks: true
+  info_panel: true

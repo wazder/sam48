@@ -1,0 +1,48 @@
+### **sam48 Processing Pipeline**
+
+1. **Video Input**
+   - Input video: 1024×1024, 30 FPS, 6 minutes
+   - Process frame by frame
+2. **Object Detection**
+   - Use YOLO to detect objects of interest: `person`, `handbag`, `backpack`, `suitcase`
+   - Output: `[frame_id, bbox(x1,y1,x2,y2), class, confidence]`
+3. **Object Tracking**
+   - Use ByteTrack or StrongSORT to assign a **unique track ID** to each object
+   - Output: `[frame_id, track_id, bbox, class, confidence]`
+4. **Rectangular Area Monitoring**
+   - Define ROI as a rectangle with four boundary lines
+   - Compute each object’s **center point**
+   - If the center point crosses into the ROI → **entry event triggered**
+5. **Event-Based SAM Analysis**
+   - If an object **stays inside ROI for 10 frames**:
+     1. Use **SAM** to extract a segmentation mask
+     2. Apply the mask to a **black background** to create a visual object image
+     3. Extract **color and shape features** from the masked region
+6. **Object Classification Refinement**
+   - If an object remains in the ROI for more than 10 frames:
+     - Compare its extracted features with **COCO dataset reference features**
+     - Assign a **final class label** (`person`, `handbag`, `backpack`, `suitcase`)
+7. **Logging and Data Storage**
+   - For each tracked object, log:
+     `[object_id, final_class, entry_frame, exit_frame, color_features, mask_image_path]`
+   - Store masked object images and JSON/CSV event logs
+8. **Debug Video Output**
+   - Generate a video overlaying **all processing stages**, including:
+     - Bounding boxes with **class and track ID**
+     - **ROI rectangle** visualization
+     - **Entry/exit events** displayed on frame
+     - **SAM segmentation overlay** when triggered
+     - **Class refinement info** when assigned
+   - On each frame, display a **real-time info panel** with:
+     - Frame number
+     - Active object IDs with their current class and features
+     - Status (e.g., “Tracked”, “In ROI”, “Analyzed”, “Classified”)
+
+---
+
+### **Key Characteristics**
+
+- **Event-driven SAM:** Heavy computation only occurs for long-staying objects
+- **Full visual traceability:** Debug video shows every stage of the pipeline
+- **Persistent object memory:** IDs and class labels tracked over time
+- **Automatic logging:** Both metadata and images stored for analysis
