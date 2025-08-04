@@ -176,12 +176,12 @@ class Sam48Pipeline:
                 
                 frame_count = 0
                 for frame_id, frame in progress_bar:
-                    # Stop if we've reached the frame limit
-                    if max_frames is not None and frame_count >= max_frames:
-                        logger.info(f"Reached frame limit: {max_frames} (frame_id: {frame_id})")
-                        break
-                    
                     frame_count += 1
+                    
+                    # Stop if we've reached the frame limit
+                    if max_frames is not None and frame_count > max_frames:
+                        logger.info(f"Reached frame limit: {max_frames} (processed {frame_count-1} frames)")
+                        break
                         
                     self.current_frame_id = frame_id
                     
